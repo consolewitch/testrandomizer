@@ -70,7 +70,12 @@ def readSource (CSVFileName):
 	return rawTestSource
 
 def randomizeTest (rawTestSource):
+	randomizedTest=[]
+	while len(rawTestSource) > 0:
+		randomizedTest.append(rawTestSource.pop(random.randint(0,len(rawTestSource)-1)))
 	return randomizedTest
+
+
 
 def outputTest (randomizedTest):
 	for i in range(0,len(randomizedTest)):
@@ -87,8 +92,7 @@ def outputTest (randomizedTest):
 		if args.a:
 			print '\n',"correct answer is: ",chr(correctAnswerPointer +65)
 
-#	print randomizedTest
 
 rawTestSource = readSource(CSVFileName)
-#randomizedTest = randomizeTest(rawTestSource)
-outputTest(rawTestSource)
+randomizedTest = randomizeTest(rawTestSource)
+outputTest(randomizedTest)
