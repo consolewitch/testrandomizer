@@ -1,8 +1,5 @@
 #!/usr/bin/python
-
 import csv, random, argparse
-
-
 
 
 # deal with command line arguments
@@ -18,6 +15,8 @@ parser.add_argument('-n', metavar='#', type=int, default='4',
 parser.add_argument('-a', action='store_true', default=False, help='specify whether to include the correct answers in output')
 args=parser.parse_args()
 
+
+# define question class
 class question:
 	def __init__(self):
 		self.questionText = ""
@@ -29,23 +28,30 @@ class question:
 
 	def putCorrect(self, correct):
 		self.correct=correct
+		self.alternatives.append(correct)
 
 	def pushAlternative(self, alternative):
 		self.alternatives.append(alternative)
 
+	def getQuestionText(self):
+		return self.questionText	
+
+	def getCorrect(self):
+		return self.correct
+
 	def popRandomAlternative(self):
 		try:
-			alternative=self.alternatives.pop(random.randint(0,len(self.alternatives)-1))
-		except ValueError:
-			print "There are not enough wrong answers available in the Excel formated CSV file"
-		return alternative
+			alternative = self.alternatives.pop(random.randint(0,len(self.alternatives)-1))
+			while alternative == "":
+				alternative = self.alternatives.pop(random.randint(0,len(self.alternatives)-1))
+			return alternative
+		except:
+			return None
+
 
 #initialize variables
 CSVFileName = args.filename
 maxNumOfOptions = args.n
-#lastAnswerPointer = numOfOptions -1 
-
-
 
 
 def readSource (CSVFileName):
@@ -67,7 +73,21 @@ def randomizeTest (rawTestSource):
 	return randomizedTest
 
 def outputTest (randomizedTest):
-	print randomizedTest
+	for i in range(0,len(randomizedTest)):
+		print '\n',randomizedTest[i].getQuestionText()
+		answer = "foo"
+		count = 0
+		while answer is not None:
+			answer = randomizedTest[i].popRandomAlternative()
+			if answer is not None:
+				print chr(count+65),') ',answer
+			if answer == randomizedTest[i].getCorrect():
+				correctAnswerPointer = count
+			count+=1
+		if args.a:
+			print '\n',"correct answer is: ",chr(correctAnswerPointer +65)
+
+#	print randomizedTest
 
 rawTestSource = readSource(CSVFileName)
 #randomizedTest = randomizeTest(rawTestSource)
