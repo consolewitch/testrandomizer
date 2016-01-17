@@ -28,7 +28,7 @@ try:
 		for row in inputCSV:
 			randomizedAnswers = [] #(re)initialize the randomizedAnswers list for each loop
 			try:
-				correctAnswerPointer = random.randint(0,lastAnswerPointer) 
+					correctAnswerPointer = random.randint(0,lastAnswerPointer) 
 			except ValueError:
 				print "Error, you probably tried to pass a number of options fewer than 1"
 				break
@@ -50,6 +50,3 @@ try:
 				print '\n',"correct answer is: ",chr(correctAnswerPointer +65)
 except IOError:
 	print "could not locate Excel formated CSV file"
-
-				
-
