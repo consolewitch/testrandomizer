@@ -1,15 +1,5 @@
 #!/usr/bin/python
 
-'''
-
-Currently the main problem is that I need to deliver question items with the same answers just in a randomized order.
-question "what is my name" answers: "god" "the devil" "bill"
-correct answer "bill"
-
-the exam questions should be randomizable without losing the correect and alternative answer locations.
-
-'''
-
 import csv, random, argparse
 
 
