@@ -1,4 +1,15 @@
 #!/usr/bin/python
+
+'''
+
+Currently the main problem is that I need to deliver question items with the same answers just in a randomized order.
+question "what is my name" answers: "god" "the devil" "bill"
+correct answer "bill"
+
+the exam questions should be randomizable without losing the correect and alternative answer locations.
+
+'''
+
 import csv, random, argparse
 
 
@@ -11,7 +22,7 @@ ________________________________________________________________________________
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, prog='testrandomizer.py',description='Generate test with randomized answers.',epilog=epilogText)
 parser.add_argument('filename', metavar='filename', type=str, help='path to the Excel csv file to convert')
 parser.add_argument('-n', metavar='#', type=int, default='4',
-                   help='number of possible answers. Note: csv must have sufficient answers available')
+                   help='maximum number of possible answers. Note: csv must have sufficient answers available')
 parser.add_argument('-a', action='store_true', default=False, help='specify whether to include the correct answers in output')
 args=parser.parse_args()
 
@@ -28,7 +39,6 @@ class question:
 
 	def putCorrect(self, correct):
 		self.correct=correct
-		self.alternatives.append(correct)
 
 	def pushAlternative(self, alternative):
 		self.alternatives.append(alternative)
@@ -38,6 +48,9 @@ class question:
 
 	def getCorrect(self):
 		return self.correct
+
+	def getNumOfAlternatives(self):
+		return len(self.alternatives)
 
 	def popRandomAlternative(self):
 		try:
@@ -64,7 +77,9 @@ def readSource (CSVFileName):
 				rawTestSource[len(rawTestSource) -1].putQuestionText(row.pop(0))
 				rawTestSource[len(rawTestSource) -1].putCorrect(row.pop(0))
 				for i in range(0,len(row)-1):
-					rawTestSource[len(rawTestSource) -1].pushAlternative(row.pop(0))
+					alternative = row.pop(0)
+					if alternative != "":
+						rawTestSource[len(rawTestSource) -1].pushAlternative(alternative)
 	except IOError:
 		print "could not locate Excel formated CSV file"
 	return rawTestSource
@@ -75,23 +90,21 @@ def randomizeTest (rawTestSource):
 		randomizedTest.append(rawTestSource.pop(random.randint(0,len(rawTestSource)-1)))
 	return randomizedTest
 
-
-
 def outputTest (randomizedTest):
-	for i in range(0,len(randomizedTest)):
-		print '\n',randomizedTest[i].getQuestionText()
-		answer = "foo"
-		count = 0
-		while answer is not None:
-			answer = randomizedTest[i].popRandomAlternative()
-			if answer is not None:
-				print chr(count+65),') ',answer
-			if answer == randomizedTest[i].getCorrect():
-				correctAnswerPointer = count
-			count+=1
+	for count,item in enumerate(randomizedTest):
+		print '\n',count+1,". ",item.getQuestionText(),'\n'
+		if item.getNumOfAlternatives()+1 < maxNumOfOptions:
+			totalNumOfAnswers=item.getNumOfAlternatives()+1
+		else:
+			totalNumOfAnswers=maxNumOfOptions
+		correctAnswerPointer=random.randint(0,totalNumOfAnswers-1)
+		for j in range(0,totalNumOfAnswers):
+			if j != correctAnswerPointer:
+				print chr(j+65),') ',item.popRandomAlternative()
+			else:
+				print chr(j+65),') ',item.getCorrect()
 		if args.a:
 			print '\n',"correct answer is: ",chr(correctAnswerPointer +65)
-
 
 rawTestSource = readSource(CSVFileName)
 randomizedTest = randomizeTest(rawTestSource)
