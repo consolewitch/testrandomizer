@@ -80,7 +80,7 @@ def randomizeTest (rawTestSource):
 		randomizedTest.append(rawTestSource.pop(random.randint(0,len(rawTestSource)-1)))
 	return randomizedTest
 
-def outputTest (randomizedTest):
+def outputTest (randomizedTest,maxNumOfOptions):
 	for count,item in enumerate(randomizedTest):
 		print '\n',count+1,". ",item.getQuestionText(),'\n'
 		if item.getNumOfAlternatives()+1 < maxNumOfOptions:
@@ -98,4 +98,4 @@ def outputTest (randomizedTest):
 
 rawTestSource = readSource(CSVFileName)
 randomizedTest = randomizeTest(rawTestSource)
-outputTest(randomizedTest)
+outputTest(randomizedTest,maxNumOfOptions)
