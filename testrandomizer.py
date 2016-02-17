@@ -34,7 +34,7 @@ class question:
 		self.alternatives.append(alternative)
 
 	def getQuestionText(self):
-		return self.questionText	
+		return self.questionText
 
 	def getCorrect(self):
 		return self.correct
