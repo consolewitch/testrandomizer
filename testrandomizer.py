@@ -30,7 +30,7 @@ class question:
 	def putCorrect(self, correct):
 		self.correct=correct
 
-	def pushAlternative(self, alternative):
+	def putAlternative(self, alternative):
 		self.alternatives.append(alternative)
 
 	def getQuestionText(self):
@@ -64,12 +64,13 @@ def readSource (CSVFileName):
 			inputCSV = csv.reader(csvfile, dialect='excel')
 			for row in inputCSV:
 				rawTestSource.append(question())
-				rawTestSource[len(rawTestSource) -1].putQuestionText(row.pop(0))
-				rawTestSource[len(rawTestSource) -1].putCorrect(row.pop(0))
-				for i in range(0,len(row)-1):
+				lastIndex=len(rawTestSource)-1
+				rawTestSource[lastIndex].putQuestionText(row.pop(0))
+				rawTestSource[lastIndex].putCorrect(row.pop(0))
+				for i in range(0,len(row)):
 					alternative = row.pop(0)
 					if alternative != "":
-						rawTestSource[len(rawTestSource) -1].pushAlternative(alternative)
+						rawTestSource[lastIndex].putAlternative(alternative)
 	except IOError:
 		print "could not locate Excel formated CSV file"
 	return rawTestSource
@@ -83,7 +84,7 @@ def randomizeTest (rawTestSource):
 def outputTest (randomizedTest,maxNumOfOptions):
 	for count,item in enumerate(randomizedTest):
 		print '\n',count+1,". ",item.getQuestionText(),'\n'
-		if item.getNumOfAlternatives()+1 < maxNumOfOptions:
+		if item.getNumOfAlternatives() < maxNumOfOptions-1:
 			totalNumOfAnswers=item.getNumOfAlternatives()+1
 		else:
 			totalNumOfAnswers=maxNumOfOptions
